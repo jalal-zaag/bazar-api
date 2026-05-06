@@ -1,6 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { isArray } from 'node:util';
 import { verify } from 'jsonwebtoken';
 import { UsersService } from '../../users/users.service';
 import { UserEntity } from '../../users/entities/user.entity';
@@ -16,13 +15,13 @@ export class CurrentUserMiddleware implements NestMiddleware {
   async use(req: RequestWithCurrentUser, res: Response, next: NextFunction) {
     const authHeader =
       req.headers['authorization'] || req.headers['Authorization'];
+
     if (
       !authHeader ||
-      isArray(authHeader) ||
+      Array.isArray(authHeader) ||
       !authHeader.startsWith('Bearer ')
     ) {
       req.currentUser = undefined;
-      next();
     } else {
       try {
         const token = authHeader.split(' ')[1];
@@ -30,13 +29,14 @@ export class CurrentUserMiddleware implements NestMiddleware {
           token,
           process.env.ACCESS_TOKEN_SECRET_KEY!,
         ) as unknown as JwtPayload;
-        const user = await this.usersService.findOne(+id);
-        req.currentUser = user;
+        req.currentUser = await this.usersService.findOne(+id);
       } catch (e) {
         // invalid/malformed token — treat as unauthenticated
+        req.currentUser = undefined;
       }
-      next();
     }
+
+    next();
   }
 }
 

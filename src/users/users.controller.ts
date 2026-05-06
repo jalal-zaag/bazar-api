@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +15,7 @@ import { UserSignupDto } from './dto/user-signup.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserSignInDto } from './dto/user-sign-in.dto';
 import { CurrentUser } from '../utility/decorators/current-user.decorator';
+import { AuthenticationGuard } from '../utility/guards/authentication.guard';
 
 @Controller('users')
 export class UsersController {
@@ -57,6 +59,7 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
+  @UseGuards(AuthenticationGuard)
   @Get('me')
   getProfile(@CurrentUser() currentUser: UserEntity) {
     return currentUser;
