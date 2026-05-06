@@ -5,8 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserSignupDto } from './dto/user-signup.dto';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { UserSignInDto } from './dto/user-sign-in.dto';
+import { sign } from 'jsonwebtoken';
 
 @Injectable()
 export class UsersService {
@@ -33,9 +34,33 @@ export class UsersService {
     return user;
   }
 
-  async signIn(userSignInDto: UserSignInDto) {
-    const userExist = await this.findSignUpByEmail(userSignInDto.email);
-    if (!userExist) throw new BadRequestException('User does not exist');
+  // async signIn(userSignInDto: UserSignInDto) {
+  //   const userExist = await this.findSignUpByEmail(userSignInDto.email);
+  //   if (!userExist) throw new BadRequestException('User does not exist');
+  //   return userExist;
+  // }
+
+  async accessToken(user: UserEntity): Promise<string> {
+    return sign(
+      { id: user.id, email: user.email },
+      process.env.ACCESS_TOKEN_SECRET_KEY!,
+      { expiresIn: process.env.ACCESS_TOKEN_SECRET_TIME as any },
+    );
+  }
+
+  async signIn(userSignInDto: UserSignInDto): Promise<UserEntity> {
+    const userExist = await this.usersRepository
+      .createQueryBuilder('users')
+      .addSelect('users.password')
+      .where('users.email = :email', { email: userSignInDto.email })
+      .getOne();
+    if (!userExist) throw new BadRequestException('user does not exist');
+    const matchPassword = await compare(
+      userSignInDto.password,
+      userExist.password,
+    );
+    if (!matchPassword) throw new BadRequestException('user does not match');
+    delete userExist.password;
     return userExist;
   }
 
