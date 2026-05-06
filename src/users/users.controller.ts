@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserSignupDto } from './dto/user-signup.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserSignInDto } from './dto/user-sign-in.dto';
+import { CurrentUser } from '../utility/decorators/current-user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -36,12 +37,12 @@ export class UsersController {
     return 'hi';
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Get('all')
+  async findAll(): Promise<UserEntity[]> {
+    return await this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get('single/:id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }
@@ -54,5 +55,10 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  @Get('me')
+  getProfile(@CurrentUser() currentUser: UserEntity) {
+    return currentUser;
   }
 }
