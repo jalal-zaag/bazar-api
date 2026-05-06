@@ -6,6 +6,7 @@ import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserSignupDto } from './dto/user-signup.dto';
 import { hash } from 'bcrypt';
+import { UserSignInDto } from './dto/user-sign-in.dto';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +31,13 @@ export class UsersService {
     user = await this.usersRepository.save(user);
     delete user.password;
     return user;
+  }
+
+  async signIn(userSignInDto: UserSignInDto) {
+    console.log("userSignInDto", userSignInDto);
+    const userExist = await this.findSignUpByEmail(userSignInDto.email);
+    if (!userExist) throw new BadRequestException('User does not exist');
+    return userExist;
   }
 
   create(createUserDto: CreateUserDto) {
