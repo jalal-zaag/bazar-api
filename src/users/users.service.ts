@@ -34,7 +34,6 @@ export class UsersService {
   }
 
   async signIn(userSignInDto: UserSignInDto) {
-    console.log("userSignInDto", userSignInDto);
     const userExist = await this.findSignUpByEmail(userSignInDto.email);
     if (!userExist) throw new BadRequestException('User does not exist');
     return userExist;
