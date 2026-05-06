@@ -32,7 +32,6 @@ export class CurrentUserMiddleware implements NestMiddleware {
         ) as unknown as JwtPayload;
         const user = await this.usersService.findOne(+id);
         req.currentUser = user;
-        console.log(user);
       } catch (e) {
         // invalid/malformed token — treat as unauthenticated
       }
