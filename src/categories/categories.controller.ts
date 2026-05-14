@@ -33,22 +33,23 @@ export class CategoriesController {
     );
   }
 
-  @Get("all")
+  @Get('all')
   async findAll() {
     return this.categoriesService.findALl();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.categoriesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(
+  @UseGuards(AuthenticationGuard, AuthorizationGurad([Roles.ADMIN]))
+  @Patch('update/:id')
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+    return await this.categoriesService.update(+id, updateCategoryDto);
   }
 
   @Delete(':id')
