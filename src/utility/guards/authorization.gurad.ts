@@ -26,7 +26,6 @@ export const AuthorizationGurad = (allowedRoles: string[]) => {
       const result = request?.currentUser?.roles
         ?.map((role) => allowedRoles.includes(role))
         .find((val: boolean) => val === true);
-      console.log('result:', result);
       if (result) return true;
       throw new UnauthorizedException('Sorry, you are not authorized');
     }

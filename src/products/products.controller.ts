@@ -41,12 +41,10 @@ export class ProductsController {
     return await this.productsService.findOne(+id);
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
-  ) {
-    return await this.productsService.update(+id, updateProductDto);
+  @UseGuards(AuthenticationGuard, AuthorizationGurad([Roles.ADMIN]))
+  @Patch('update/:id')
+  async update(@Param('id')id: string, @Body() updateProductDto: UpdateProductDto, @CurrentUser() currentUser: UserEntity) {
+    return await this.productsService.update(+id, updateProductDto, currentUser);
   }
 
   @Delete(':id')

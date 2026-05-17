@@ -5,6 +5,7 @@ import { ProductEntity } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
+import { UserEntity } from '../users/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -55,7 +56,7 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    return await this.productRepository.findOne({
+    const product = await this.productRepository.findOne({
       where: { id: id },
       relations: ['category', 'addedBy'],
       select: {
@@ -72,10 +73,31 @@ export class ProductsService {
         },
       },
     });
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(
+    id: number,
+    updateProductDto: Partial<UpdateProductDto>,
+    currentUser: UserEntity,
+  ) {
+    const product = await this.findOne(id);
+    Object.assign(product, updateProductDto);
+
+    product.addedBy = currentUser;
+
+    if (updateProductDto.categoryId) {
+      const category = await this.categoryService.findOne(
+        updateProductDto.categoryId,
+      );
+
+      product.category = category;
+    }
+
+    return await this.productRepository.save(product);
   }
 
   remove(id: number) {
