@@ -31,19 +31,22 @@ export class ProductsController {
     return await this.productsService.create(createProductDto, currentUser);
   }
 
-  @Get("get-all")
+  @Get('get-all')
   findAll() {
     return this.productsService.findAll();
   }
 
   @Get('get-by-id/:id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.productsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    return await this.productsService.update(+id, updateProductDto);
   }
 
   @Delete(':id')

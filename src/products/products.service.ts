@@ -35,14 +35,27 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-  findAll() {
-    return this.productRepository.find({
+  async findAll() {
+    return await this.productRepository.find({
       relations: ['category', 'addedBy'],
+      select: {
+        addedBy: {
+          id: true,
+          name: true,
+          email: true,
+          roles: true,
+        },
+        category: {
+          id: true,
+          title: true,
+          description: true,
+        },
+      },
     });
   }
 
-  findOne(id: number) {
-    return this.productRepository.findOne({
+  async findOne(id: number) {
+    return await this.productRepository.findOne({
       where: { id: id },
       relations: ['category', 'addedBy'],
       select: {
@@ -50,6 +63,7 @@ export class ProductsService {
           id: true,
           name: true,
           email: true,
+          roles: true,
         },
         category: {
           id: true,
