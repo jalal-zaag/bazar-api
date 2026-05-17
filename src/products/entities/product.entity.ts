@@ -21,10 +21,10 @@ export class ProductEntity {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 10 })
+  @Column({ default: 0 })
   stock: number;
 
   @Column('simple-array')

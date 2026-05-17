@@ -35,5 +35,5 @@ export class CreateProductDto {
 
   @IsNotEmpty({ message: 'category can not be empty' })
   @IsNumber({}, { message: 'category id should be a  number' })
-  category: number;
+  categoryId: number;
 }
