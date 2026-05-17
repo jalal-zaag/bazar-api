@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Roles } from '../../utility/common/user-roles.enu';
 import { CategoryEntity } from '../../categories/entities/category.entity';
+import { ProductEntity } from '../../products/entities/product.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -35,4 +36,7 @@ export class UserEntity {
 
   @OneToMany(() => CategoryEntity, (category) => category.addedBy)
   categories: CategoryEntity[];
+
+  @OneToMany(() => ProductEntity, (product) => product.addedBy)
+  products: ProductEntity[];
 }
