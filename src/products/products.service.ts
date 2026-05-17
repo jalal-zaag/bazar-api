@@ -19,7 +19,10 @@ export class ProductsService {
     private readonly categoryService: CategoriesService,
   ) {}
 
-  async create(createProductDto: CreateProductDto, currentUser): Promise<ProductEntity> {
+  async create(
+    createProductDto: CreateProductDto,
+    currentUser,
+  ): Promise<ProductEntity> {
     const category = await this.categoryService.findOne(
       +createProductDto.categoryId,
     );
@@ -33,11 +36,28 @@ export class ProductsService {
   }
 
   findAll() {
-    return `This action returns all products`;
+    return this.productRepository.find({
+      relations: ['category', 'addedBy'],
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} product`;
+    return this.productRepository.findOne({
+      where: { id: id },
+      relations: ['category', 'addedBy'],
+      select: {
+        addedBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        category: {
+          id: true,
+          title: true,
+          description: true,
+        },
+      },
+    });
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {

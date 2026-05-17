@@ -31,12 +31,12 @@ export class ProductsController {
     return await this.productsService.create(createProductDto, currentUser);
   }
 
-  @Get()
+  @Get("get-all")
   findAll() {
     return this.productsService.findAll();
   }
 
-  @Get(':id')
+  @Get('get-by-id/:id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }
