@@ -36,8 +36,13 @@ export class ReviewsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.reviewsService.findOne(+id);
+  }
+
+  @Get('get-review-by-product-id/:productId')
+  async findReviewByProductId(@Param('productId') productId: string) {
+    return await this.reviewsService.findReviewByProductId(+productId);
   }
 
   @Patch(':id')

@@ -61,8 +61,32 @@ export class ReviewsService {
     return await this.reviewRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
+  async findOne(id: number) {
+    return await this.reviewRepository.findOne({
+      where: { id },
+      relations: {
+        user: true,
+        product: {
+          category: true,
+        },
+      },
+    });
+  }
+
+  async findReviewByProductId(id: number) {
+    return await this.reviewRepository.findOne({
+      where: {
+        product: {
+          id,
+        },
+      },
+      relations: {
+        user: true,
+        product: {
+          category: true,
+        },
+      },
+    });
   }
 
   update(id: number, updateReviewDto: UpdateReviewDto) {
