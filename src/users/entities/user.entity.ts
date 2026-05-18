@@ -10,6 +10,7 @@ import {
 import { Roles } from '../../utility/common/user-roles.enu';
 import { CategoryEntity } from '../../categories/entities/category.entity';
 import { ProductEntity } from '../../products/entities/product.entity';
+import { ReviewEntity } from '../../reviews/entities/review.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -39,4 +40,7 @@ export class UserEntity {
 
   @OneToMany(() => ProductEntity, (product) => product.addedBy)
   products: ProductEntity[];
+
+  @OneToMany(() => ReviewEntity, (review) => review.user)
+  reviews: ReviewEntity;
 }
