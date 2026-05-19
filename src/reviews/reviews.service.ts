@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -93,7 +93,13 @@ export class ReviewsService {
     return `This action updates a #${id} review`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  async remove(id: number) {
+    const review = await this.reviewRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!review) throw new NotFoundException(`Review with id ${id} not found`);
+
+    return await this.reviewRepository.remove(review);
   }
 }

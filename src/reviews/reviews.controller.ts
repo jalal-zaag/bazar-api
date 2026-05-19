@@ -50,8 +50,9 @@ export class ReviewsController {
     return this.reviewsService.update(+id, updateReviewDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewsService.remove(+id);
+  @UseGuards(AuthenticationGuard, AuthorizationGurad([Roles.ADMIN]))
+  @Delete('delete/:id')
+  async remove(@Param('id') id: string) {
+    return await this.reviewsService.remove(+id);
   }
 }
